@@ -1,6 +1,17 @@
 window.onload = function() {
   const jet = document.getElementById('jet');
   const board = document.getElementById('board');
+  const startbtn = document.getElementById('startGame');
+  let enableGame = true;
+  
+  window.addEventListener('keydown', function(e) {
+    if (enableGame) {
+      if (e.key === 'Enter') {
+        enableGame = false
+        generateAliens();
+      }
+    }
+  })
 }
 
 window.addEventListener('keydown', function(e) {
@@ -9,11 +20,11 @@ window.addEventListener('keydown', function(e) {
   // let bottom = parseInt(window.getComputedStyle(jet).getPropertyValue('bottom'));
   // Get the direction of the arrow and the space to move
   // Direction left and right
-  if (e.key === 'ArrowLeft' && left > 0) {
-    jet.style.left = left - 20;
+  if (e.key === 'ArrowLeft' && left > 9) {
+    jet.style.left = left - 10;
 
-  } else if (e.key === 'ArrowRight' && left <= 570) {
-    jet.style.left = left + 20;
+  } else if (e.key === 'ArrowRight' && left <= 540) {
+    jet.style.left = left + 10;
   }
   // Direction up and down, max 200
   // if (e.key === 'ArrowUp' && bottom < 200 ) {
@@ -48,10 +59,11 @@ window.addEventListener('keydown', function(e) {
             bulletBound.top <= alienBound.top &&
             bulletBound.bottom <= alienBound.bottom
           ) {
-            alien.parentElement.removeChild(alien); //Just removing that particular alien;
+            alien.classList.add('explosion');
+            alien.parentElement.removeChild(alien);
+             //Just removing that particular alien;
             //Scoreboard
-            document.getElementById('scores').innerHTML =
-              parseInt(document.getElementById('scores').innerHTML) + 1;
+            document.getElementById('scores').innerHTML = parseInt(document.getElementById('scores').innerHTML) + 1;
           }
         }
       }
@@ -70,34 +82,37 @@ window.addEventListener('keydown', function(e) {
   }
 })
 
-let generateAliens = setInterval(function() {
-  let alien = document.createElement('div');
-  alien.classList.add('aliens');
+function generateAliens() {
 
-  // let alienLeft = parseInt(window.getComputedStyle(alien).getPropertyValue('left'));
+  let generateAliens = setInterval(function() {
+    let alien = document.createElement('div');
+    alien.classList.add('aliens');
 
-  alien.style.left = Math.floor(Math.random() * 570);
+    // let alienLeft = parseInt(window.getComputedStyle(alien).getPropertyValue('left'));
 
-  board.appendChild(alien);
-  
-}, 1000);
+    alien.style.left = Math.floor(Math.random() * 530);
 
+    board.appendChild(alien);
+    
+  }, 1000);
 
-let moveAliens = setInterval(function() {
+  let moveAliens = setInterval(function() {
 
-  let aliens = document.getElementsByClassName('aliens');
-  for (let i=0; i < aliens.length; i++) {
-    let alien = aliens[i];
-    let alienTop = parseInt(window.getComputedStyle(alien).getPropertyValue('top'));
+    let aliens = document.getElementsByClassName('aliens');
+    for (let i=0; i < aliens.length; i++) {
+      let alien = aliens[i];
+      let alienTop = parseInt(window.getComputedStyle(alien).getPropertyValue('top'));
 
-    if (alienTop >= 570) {
-      alert('Your world has been invaded!');
-      clearInterval(generateAliens);
-      clearInterval(moveAliens);
-      window.location.reload();
+      if (alienTop >= 570) {
+        alert('Your world has been invaded!');
+        clearInterval(generateAliens);
+        clearInterval(moveAliens);
+        window.location.reload();
+      }
+
+      alien.style.top = alienTop + 25;
     }
 
-    alien.style.top = alienTop + 25;
-  }
+  }, 800);
 
-}, 600);
+}
